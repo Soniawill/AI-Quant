@@ -1,0 +1,263 @@
+{
+  "$schema": "stock-ma-cross-strategy-spec-v1",
+  "spec_name": "MA交叉策略分析与回测规范",
+  "version": "1.0.0",
+  "description": "基于同花顺/Tushare数据源，对指定股票/ETF/贵金属产品进行短周期与长周期均线交叉策略分析，包括数据加载、信号计算、可视化与回测",
+
+  "metadata": {
+    "author": "BA-AI量化",
+    "created_at": "2026-07-11",
+    "update_policy": "按任务更新",
+    "task_id": "MA_CROSS_20260711"
+  },
+
+  "universe": {
+    "description": "待分析的标的注册表",
+    "assets": [
+      {
+        "name": "香农芯创",
+        "code": "300475",
+        "ticker": "300475.SZ",
+        "exchange": "SZ",
+        "asset_class": "A股",
+        "notes": "半导体分销"
+      },
+      {
+        "name": "立讯精密",
+        "code": "002475",
+        "ticker": "002475.SZ",
+        "exchange": "SZ",
+        "asset_class": "A股",
+        "notes": "消费电子/连接器"
+      },
+      {
+        "name": "工业富联",
+        "code": "601138",
+        "ticker": "601138.SH",
+        "exchange": "SH",
+        "asset_class": "A股",
+        "notes": "工业互联网/服务器"
+      },
+      {
+        "name": "积存金",
+        "code": "AU9999",
+        "ticker": "AU9999.SGE",
+        "exchange": "SGE",
+        "asset_class": "贵金属/账户金",
+        "notes": "上海金AU9999现货；通过tushare sge_daily接口或同花顺导出获取",
+        "candidate_tickers": ["AU9999.SGE"]
+      },
+      {
+        "name": "通信ETF",
+        "code": "515880",
+        "ticker": "515880.SH",
+        "exchange": "SH",
+        "asset_class": "ETF",
+        "notes": "国泰中证全指通信设备ETF",
+        "candidate_tickers": ["515880.SH"]
+      }
+    ]
+  },
+
+  "data_sources": {
+    "description": "数据源优先级配置",
+    "sources": [
+      {
+        "priority": 1,
+        "data_type": "local_csv",
+        "description": "优先加载已存储的股价数据文件",
+        "file_pattern": "{name}_{code}_行情数据.csv 或 {ticker}_*.csv",
+        "required_columns": ["date", "open", "high", "low", "close", "volume"],
+        "optional_columns": ["turnover", "amount", "adj_close"],
+        "date_format": "%Y-%m-%d"
+      },
+      {
+        "priority": 2,
+        "data_type": "tushare_mcp",
+        "source": "tushareMcp",
+        "description": "若本地无数据，通过mcp_config.json中配置的tushareMcp获取日线",
+        "api": "pro_bar / daily",
+        "params": {
+          "ts_code": "{ticker}",
+          "asset": "E",
+          "freq": "D",
+          "start_date": "20230701",
+          "end_date": "20260711",
+          "adj": "qfq"
+        }
+      },
+      {
+        "priority": 3,
+        "data_type": "ths_browser",
+        "source": "manual",
+        "description": "通过同花顺客户端/网页导出行情数据为CSV后，再按local_csv流程加载",
+        "notes": "自动化直接访问同花顺数据库需要授权接口，本项目未配置"
+      }
+    ]
+  },
+
+  "strategy_parameters": {
+    "description": "MA交叉策略参数",
+    "short_window": 5,
+    "long_window": 15,
+    "signal_logic": {
+      "buy": "short_ma 上穿 long_ma（前一日 short_ma <= long_ma，当日 short_ma > long_ma）",
+      "sell": "short_ma 下穿 long_ma（前一日 short_ma >= long_ma，当日 short_ma < long_ma）",
+      "position": "买入信号产生后持有多头，直到出现卖出信号平仓；初始及空仓时不反向做空"
+    }
+  },
+
+  "analysis_workflow": {
+    "description": "分析与回测执行步骤",
+    "steps": [
+      {
+        "step_id": 1,
+        "name": "加载已存储股价数据",
+        "action": "load_data",
+        "input": "universe.assets[].ticker",
+        "output": "raw_price_dataframes",
+        "tool": "local_python_script",
+        "notes": "优先从本地CSV读取；缺失标的通过tushare_mcp补充"
+      },
+      {
+        "step_id": 2,
+        "name": "数据清洗与对齐",
+        "action": "clean_data",
+        "input": "raw_price_dataframes",
+        "output": "cleaned_dataframes",
+        "operations": ["去除空行", "按日期升序排序", "统一列名", "前复权处理(若本地未复权)"]
+      },
+      {
+        "step_id": 3,
+        "name": "计算长短均线",
+        "action": "calculate_ma",
+        "input": "cleaned_dataframes",
+        "output": "ma_dataframes",
+        "params": {
+          "short_ma": "ma_5 = close.rolling(5).mean()",
+          "long_ma": "ma_15 = close.rolling(15).mean()"
+        }
+      },
+      {
+        "step_id": 4,
+        "name": "计算交易信号",
+        "action": "generate_signals",
+        "input": "ma_dataframes",
+        "output": "signals_dataframes",
+        "signal_columns": ["signal", "position", "buy_signal", "sell_signal"]
+      },
+      {
+        "step_id": 5,
+        "name": "绘制可视化图形",
+        "action": "visualize",
+        "input": "signals_dataframes",
+        "output": "charts/{ticker}_ma_cross.png",
+        "chart_elements": [
+          "收盘价曲线",
+          "MA5曲线",
+          "MA15曲线",
+          "买入信号标记（绿色向上箭头）",
+          "卖出信号标记（红色向下箭头）"
+        ]
+      },
+      {
+        "step_id": 6,
+        "name": "模拟交易与回测",
+        "action": "backtest",
+        "input": "signals_dataframes",
+        "output": "backtest_results.json",
+        "metrics": [
+          "累计收益率 (Cumulative Return)",
+          "年化收益率 (Annualized Return)",
+          "最大回撤 (Max Drawdown)",
+          "夏普比率 (Sharpe Ratio)",
+          "总交易次数",
+          "胜率 (Win Rate)",
+          "盈亏比 (Profit/Loss Ratio)",
+          "最终资金"
+        ],
+        "assumptions": {
+          "initial_capital": 100000,
+          "commission_rate": 0.0003,
+          "slippage": 0.001,
+          "position_sizing": "全仓买入/卖出"
+        }
+      },
+      {
+        "step_id": 7,
+        "name": "汇总报告",
+        "action": "report",
+        "input": ["backtest_results.json", "charts/"],
+        "output": "MA交叉策略回测报告.md"
+      }
+    ]
+  },
+
+  "output_schema": {
+    "description": "输出文件结构",
+    "files": [
+      {
+        "path": "data/{ticker}_daily.csv",
+        "description": "清洗后的日线行情数据"
+      },
+      {
+        "path": "signals/{ticker}_signals.csv",
+        "description": "包含close、ma_5、ma_15、signal、buy_signal、sell_signal的信号表"
+      },
+      {
+        "path": "charts/{ticker}_ma_cross.png",
+        "description": "股价与MA交叉信号可视化图"
+      },
+      {
+        "path": "backtest_results.json",
+        "description": "各标的回测绩效指标"
+      },
+      {
+        "path": "MA交叉策略回测报告.md",
+        "description": "汇总报告"
+      }
+    ]
+  },
+
+  "quality_checks": {
+    "description": "数据与策略质量检查",
+    "checks": [
+      {
+        "check_id": "qc_ma_001",
+        "name": "本地数据存在性检查",
+        "rule": "每个ticker优先匹配本地CSV；缺失则尝试tushareMcp",
+        "severity": "warning"
+      },
+      {
+        "check_id": "qc_ma_002",
+        "name": "日期连续性",
+        "rule": "日线数据连续，缺失交易日不超过3个（节假日除外）",
+        "severity": "warning"
+      },
+      {
+        "check_id": "qc_ma_003",
+        "name": "均线可用性",
+        "rule": "数据长度 >= long_window（15），否则无法计算MA15",
+        "severity": "blocking"
+      },
+      {
+        "check_id": "qc_ma_004",
+        "name": "信号有效性",
+        "rule": "至少出现一次买卖信号配对，否则策略无交易",
+        "severity": "warning"
+      }
+    ]
+  },
+
+  "execution_config": {
+    "description": "执行配置",
+    "output_directory": "./",
+    "subdirs": ["data", "signals", "charts"],
+    "python_version": ">=3.9",
+    "required_packages": ["pandas", "numpy", "matplotlib", "tushare"],
+    "logging": {
+      "level": "INFO",
+      "format": "{timestamp} | {level} | {asset} | {step} | {message}"
+    }
+  }
+}
