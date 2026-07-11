@@ -1,0 +1,246 @@
+{
+  "$schema": "stock-turtle-strategy-spec-v1",
+  "spec_name": "海龟交易法策略分析与回测规范",
+  "version": "1.0.0",
+  "description": "基于同花顺/Tushare/akshare数据源，对指定股票/ETF/贵金属产品进行海龟交易法策略分析，包括唐奇安通道、ATR、信号计算、可视化与回测",
+
+  "metadata": {
+    "author": "BA-AI量化",
+    "created_at": "2026-07-11",
+    "update_policy": "按任务更新",
+    "task_id": "TURTLE_20260711"
+  },
+
+  "universe": {
+    "description": "待分析的标的注册表",
+    "assets": [
+      {
+        "name": "香农芯创",
+        "code": "300475",
+        "ticker": "300475.SZ",
+        "exchange": "SZ",
+        "asset_class": "A股",
+        "notes": "半导体分销"
+      },
+      {
+        "name": "立讯精密",
+        "code": "002475",
+        "ticker": "002475.SZ",
+        "exchange": "SZ",
+        "asset_class": "A股",
+        "notes": "消费电子/连接器"
+      },
+      {
+        "name": "工业富联",
+        "code": "601138",
+        "ticker": "601138.SH",
+        "exchange": "SH",
+        "asset_class": "A股",
+        "notes": "工业互联网/服务器"
+      },
+      {
+        "name": "积存金",
+        "code": "AU9999",
+        "ticker": "AU9999.SGE",
+        "exchange": "SGE",
+        "asset_class": "贵金属/账户金",
+        "notes": "上海金AU9999现货"
+      },
+      {
+        "name": "通信ETF",
+        "code": "515880",
+        "ticker": "515880.SH",
+        "exchange": "SH",
+        "asset_class": "ETF",
+        "notes": "国泰中证全指通信设备ETF"
+      }
+    ]
+  },
+
+  "data_sources": {
+    "description": "数据源优先级配置",
+    "sources": [
+      {
+        "priority": 1,
+        "data_type": "local_csv",
+        "description": "优先加载已存储的股价数据文件",
+        "file_pattern": "{ticker}_daily.csv",
+        "required_columns": ["date", "open", "high", "low", "close", "volume"],
+        "optional_columns": ["turnover", "amount", "adj_close"],
+        "date_format": "%Y-%m-%d"
+      },
+      {
+        "priority": 2,
+        "data_type": "tushare_mcp",
+        "source": "tushareMcp",
+        "description": "若本地无数据，通过mcp_config.json中配置的tushareMcp获取日线",
+        "api": "pro_bar / daily",
+        "params": {
+          "ts_code": "{ticker}",
+          "asset": "E",
+          "freq": "D",
+          "start_date": "20230701",
+          "end_date": "20260711",
+          "adj": "qfq"
+        }
+      }
+    ]
+  },
+
+  "strategy_parameters": {
+    "description": "海龟交易法参数",
+    "entry_period": 20,
+    "exit_period": 10,
+    "atr_period": 14,
+    "signal_logic": {
+      "buy": "收盘价突破 entry_period 日最高价（唐奇安通道上轨）",
+      "sell": "收盘价跌破 exit_period 日最低价（唐奇安通道下轨）",
+      "position": "买入信号产生后持有多头，直到出现卖出信号平仓；初始及空仓时不反向做空"
+    }
+  },
+
+  "analysis_workflow": {
+    "description": "分析与回测执行步骤",
+    "steps": [
+      {
+        "step_id": 1,
+        "name": "加载已存储股价数据",
+        "action": "load_data",
+        "input": "universe.assets[].ticker",
+        "output": "raw_price_dataframes",
+        "tool": "local_python_script"
+      },
+      {
+        "step_id": 2,
+        "name": "计算唐奇安通道",
+        "action": "calculate_donchian",
+        "input": "cleaned_dataframes",
+        "output": "channel_dataframes",
+        "params": {
+          "upper_channel": "entry_period 日最高价滚动最大值",
+          "lower_channel": "exit_period 日最低价滚动最小值"
+        }
+      },
+      {
+        "step_id": 3,
+        "name": "计算 ATR",
+        "action": "calculate_atr",
+        "input": "channel_dataframes",
+        "output": "atr_dataframes",
+        "params": {
+          "atr": "atr_period 日真实波幅(TR)的简单移动平均"
+        }
+      },
+      {
+        "step_id": 4,
+        "name": "计算交易信号",
+        "action": "generate_signals",
+        "input": "atr_dataframes",
+        "output": "signals_dataframes",
+        "signal_columns": ["signal", "position", "buy_signal", "sell_signal"]
+      },
+      {
+        "step_id": 5,
+        "name": "绘制可视化图形",
+        "action": "visualize",
+        "input": "signals_dataframes",
+        "output": "charts/{ticker}_turtle.png",
+        "chart_elements": [
+          "收盘价曲线",
+          "上轨（entry_period 日最高价）",
+          "下轨（exit_period 日最低价）",
+          "买入信号标记（绿色向上箭头）",
+          "卖出信号标记（红色向下箭头）"
+        ]
+      },
+      {
+        "step_id": 6,
+        "name": "模拟交易与回测",
+        "action": "backtest",
+        "input": "signals_dataframes",
+        "output": "backtest_results.json",
+        "metrics": [
+          "累计收益率",
+          "年化收益率",
+          "最大回撤",
+          "夏普比率",
+          "总交易次数",
+          "胜率",
+          "盈亏比",
+          "最终资金"
+        ],
+        "assumptions": {
+          "initial_capital": 100000,
+          "commission_rate": 0.0003,
+          "slippage": 0.001,
+          "position_sizing": "全仓买入/卖出"
+        }
+      },
+      {
+        "step_id": 7,
+        "name": "生成交互式 HTML 报告",
+        "action": "generate_html",
+        "input": ["backtest_results.json", "charts/"],
+        "output": "turtle_strategy_report.html"
+      }
+    ]
+  },
+
+  "output_schema": {
+    "description": "输出文件结构",
+    "files": [
+      {
+        "path": "turtle_signals/{ticker}_signals.csv",
+        "description": "包含close、upper_channel、lower_channel、atr、signal、buy_signal、sell_signal的信号表"
+      },
+      {
+        "path": "turtle_charts/{ticker}_turtle.png",
+        "description": "股价与海龟交易信号可视化图"
+      },
+      {
+        "path": "turtle_backtest_results.json",
+        "description": "各标的回测绩效指标"
+      },
+      {
+        "path": "turtle_strategy_report.html",
+        "description": "交互式HTML报告"
+      }
+    ]
+  },
+
+  "quality_checks": {
+    "description": "数据与策略质量检查",
+    "checks": [
+      {
+        "check_id": "qc_turtle_001",
+        "name": "本地数据存在性检查",
+        "rule": "每个ticker优先匹配本地CSV；缺失则尝试tushareMcp",
+        "severity": "warning"
+      },
+      {
+        "check_id": "qc_turtle_002",
+        "name": "通道可用性",
+        "rule": "数据长度 >= entry_period（20），否则无法计算上轨",
+        "severity": "blocking"
+      },
+      {
+        "check_id": "qc_turtle_003",
+        "name": "信号有效性",
+        "rule": "至少出现一次买卖信号配对，否则策略无交易",
+        "severity": "warning"
+      }
+    ]
+  },
+
+  "execution_config": {
+    "description": "执行配置",
+    "output_directory": "./",
+    "subdirs": ["turtle_data", "turtle_signals", "turtle_charts"],
+    "python_version": ">=3.9",
+    "required_packages": ["pandas", "numpy", "matplotlib", "tushare", "akshare"],
+    "logging": {
+      "level": "INFO",
+      "format": "{timestamp} | {level} | {asset} | {step} | {message}"
+    }
+  }
+}

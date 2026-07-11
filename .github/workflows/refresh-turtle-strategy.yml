@@ -1,0 +1,65 @@
+name: 定时刷新海龟策略报告
+
+on:
+  # 每天北京时间 16:30（UTC 08:30）运行，A 股收盘后
+  schedule:
+    - cron: '30 8 * * *'
+  # 支持手动触发
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  refresh-and-deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: turtle-strategy
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 设置 Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 安装依赖
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: 生成海龟策略报告
+        env:
+          TUSHARE_TOKEN: ${{ secrets.TUSHARE_TOKEN }}
+        run: |
+          python run_turtle_strategy.py --html-output index.html
+
+      - name: 提交更新的报告
+        working-directory: ${{ github.workspace }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add turtle-strategy/index.html turtle-strategy/turtle_backtest_results.json
+          git diff --staged --quiet || git commit -m "chore: auto refresh turtle strategy report [$(date -u +%Y-%m-%d)]"
+          git push
+
+      - name: 配置 GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: 上传站点产物
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+
+      - name: 部署到 GitHub Pages
+        uses: actions/deploy-pages@v4

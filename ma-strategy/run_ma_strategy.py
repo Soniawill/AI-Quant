@@ -50,8 +50,14 @@ def get_tushare_token():
 
 
 def load_data(data_dir='data'):
-    """加载所有已存储的日线数据"""
-    files = sorted(glob.glob(os.path.join(data_dir, '*_daily.csv')))
+    """加载所有已存储的日线数据，优先从 shared-data 读取"""
+    candidate_dirs = [data_dir, '../shared-data', 'shared-data']
+    files = []
+    for d in candidate_dirs:
+        if os.path.isdir(d):
+            files = sorted(glob.glob(os.path.join(d, '*_daily.csv')))
+            if files:
+                break
     assets = []
     for f in files:
         df = pd.read_csv(f)
