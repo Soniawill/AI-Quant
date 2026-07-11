@@ -1,0 +1,304 @@
+{
+  "$schema": "stock-data-collection-spec-v1",
+  "spec_name": "A股批量取数规范",
+  "version": "1.0.0",
+  "description": "规范化A股多股票批量数据采集流程，支持实时行情、历史K线、技术指标及基本面数据的标准化获取",
+  
+  "metadata": {
+    "author": "BA-AI量化",
+    "created_at": "2026-01-13",
+    "update_policy": "按需更新"
+  },
+
+  "stock_registry": {
+    "description": "股票注册表，定义目标股票及其元数据",
+    "stocks": [
+      {
+        "name": "东山精密",
+        "code": "002384",
+        "ticker": "002384.SZ",
+        "exchange": "SZ",
+        "sector": "电子元件/PCB",
+        "industry": "精密制造",
+        "market": "A股主板"
+      },
+      {
+        "name": "北方华创",
+        "code": "002371",
+        "ticker": "002371.SZ",
+        "exchange": "SZ",
+        "sector": "半导体设备",
+        "industry": "集成电路装备",
+        "market": "A股主板"
+      },
+      {
+        "name": "永鼎股份",
+        "code": "600105",
+        "ticker": "600105.SH",
+        "exchange": "SH",
+        "sector": "通信设备/光通信",
+        "industry": "电缆/光缆",
+        "market": "A股主板"
+      }
+    ]
+  },
+
+  "data_sources": {
+    "description": "数据源配置，定义各数据类型对应的数据源与工具",
+    "sources": [
+      {
+        "data_type": "realtime_quote",
+        "source": "kimi_finance_v2",
+        "api_type": "realtime_price",
+        "max_batch_size": 3,
+        "output_format": "csv",
+        "rate_limit": "每请求最多3只 ticker",
+        "required_params": ["ticker", "file_path"],
+        "optional_params": ["time", "type"]
+      },
+      {
+        "data_type": "historical_kline",
+        "source": "stock-assistant",
+        "command": "series batch",
+        "max_batch_size": 10,
+        "output_format": "json",
+        "required_params": ["codes", "interval", "limit"],
+        "supported_intervals": ["1d"],
+        "default_limit": 300,
+        "note": "A股仅支持1d日线"
+      },
+      {
+        "data_type": "technical_indicators",
+        "source": "stock-assistant",
+        "command": "indicator batch",
+        "output_format": "json",
+        "required_params": ["indicators", "input-json"],
+        "default_indicators": ["ma:20", "ma:60", "ma:250", "rsi:14", "macd"],
+        "note": "需先获取kline数据作为输入"
+      },
+      {
+        "data_type": "bundle_technical",
+        "source": "stock-assistant",
+        "command": "bundle technical",
+        "output_format": "json",
+        "required_params": ["codes", "interval", "limit", "indicators"],
+        "recommended": true,
+        "note": "quote + series + indicators 一体化输出，推荐优先使用"
+      },
+      {
+        "data_type": "news_announcements",
+        "source": "stock-assistant",
+        "command": "research search",
+        "output_format": "json",
+        "required_params": ["query", "limit"],
+        "default_limit": 5
+      },
+      {
+        "data_type": "fundamental_f10",
+        "source": "kimi_fetch_v2",
+        "url_template": "https://basic.10jqka.com.cn/{code}/finance.html",
+        "output_format": "text",
+        "note": "需逐个股票抓取"
+      }
+    ]
+  },
+
+  "collection_workflow": {
+    "description": "取数工作流，定义执行顺序与依赖关系",
+    "steps": [
+      {
+        "step_id": 1,
+        "name": "股票代码验证",
+        "action": "validate_tickers",
+        "input": "stock_registry.stocks[].ticker",
+        "output": "validated_tickers[]",
+        "tool": "kimi_search_v2",
+        "fallback": "手动确认交易所后缀"
+      },
+      {
+        "step_id": 2,
+        "name": "实时行情获取",
+        "action": "fetch_realtime",
+        "input": "validated_tickers",
+        "output": "realtime_quotes.csv",
+        "tool": "kimi_finance_v2",
+        "params": {
+          "type": "realtime_price",
+          "file_path": "data/realtime_quotes.csv"
+        }
+      },
+      {
+        "step_id": 3,
+        "name": "历史K线获取",
+        "action": "fetch_kline",
+        "input": "validated_tickers",
+        "output": "kline_data.json",
+        "tool": "stock-assistant series batch",
+        "params": {
+          "interval": "1d",
+          "limit": 300
+        }
+      },
+      {
+        "step_id": 4,
+        "name": "技术指标计算",
+        "action": "calculate_indicators",
+        "input": "kline_data.json",
+        "output": "indicators.json",
+        "tool": "stock-assistant indicator batch",
+        "params": {
+          "indicators": "ma:20,ma:60,ma:250,rsi:14,macd"
+        },
+        "depends_on": [3]
+      },
+      {
+        "step_id": 5,
+        "name": "综合数据打包（推荐替代步骤3+4）",
+        "action": "bundle_technical",
+        "input": "validated_tickers",
+        "output": "technical_bundle.json",
+        "tool": "stock-assistant bundle technical",
+        "params": {
+          "interval": "1d",
+          "limit": 300,
+          "indicators": "ma:20,ma:60,ma:250,rsi:14,macd"
+        },
+        "replaces_steps": [3, 4],
+        "recommended": true
+      },
+      {
+        "step_id": 6,
+        "name": "新闻与公告搜索",
+        "action": "search_news",
+        "input": "stock_registry.stocks[].name",
+        "output": "news_results.json",
+        "tool": "stock-assistant research search",
+        "params": {
+          "query_template": "{name} 今日 公告",
+          "limit": 5
+        },
+        "parallelizable": true
+      },
+      {
+        "step_id": 7,
+        "name": "基本面数据抓取",
+        "action": "fetch_fundamental",
+        "input": "stock_registry.stocks[].code",
+        "output": "fundamental_texts/",
+        "tool": "kimi_fetch_v2",
+        "params": {
+          "url_template": "https://basic.10jqka.com.cn/{code}/finance.html"
+        },
+        "parallelizable": true
+      },
+      {
+        "step_id": 8,
+        "name": "数据汇总与格式化",
+        "action": "aggregate_data",
+        "input": ["realtime_quotes.csv", "technical_bundle.json", "news_results.json", "fundamental_texts/"],
+        "output": "final_stock_data.json",
+        "tool": "local_python_script",
+        "note": "合并所有数据源为统一格式"
+      }
+    ]
+  },
+
+  "output_schema": {
+    "description": "输出数据结构与字段定义",
+    "realtime_quote_fields": [
+      { "field": "ticker", "type": "string", "description": "股票代码含后缀" },
+      { "field": "name", "type": "string", "description": "股票名称" },
+      { "field": "price", "type": "float", "description": "当前价格" },
+      { "field": "change", "type": "float", "description": "涨跌额" },
+      { "field": "change_pct", "type": "float", "description": "涨跌幅%" },
+      { "field": "volume", "type": "int", "description": "成交量" },
+      { "field": "turnover", "type": "float", "description": "成交额" },
+      { "field": "open", "type": "float", "description": "开盘价" },
+      { "field": "high", "type": "float", "description": "最高价" },
+      { "field": "low", "type": "float", "description": "最低价" },
+      { "field": "prev_close", "type": "float", "description": "昨收价" },
+      { "field": "timestamp", "type": "datetime", "description": "数据时间戳" }
+    ],
+    "kline_fields": [
+      { "field": "date", "type": "string", "description": "交易日期 YYYY-MM-DD" },
+      { "field": "open", "type": "float", "description": "开盘价" },
+      { "field": "high", "type": "float", "description": "最高价" },
+      { "field": "low", "type": "float", "description": "最低价" },
+      { "field": "close", "type": "float", "description": "收盘价" },
+      { "field": "volume", "type": "int", "description": "成交量" },
+      { "field": "turnover", "type": "float", "description": "成交额" }
+    ],
+    "indicator_fields": [
+      { "field": "ma20", "type": "float", "description": "20日均线" },
+      { "field": "ma60", "type": "float", "description": "60日均线" },
+      { "field": "ma250", "type": "float", "description": "250日均线" },
+      { "field": "rsi14", "type": "float", "description": "RSI(14)" },
+      { "field": "macd_dif", "type": "float", "description": "MACD DIF线" },
+      { "field": "macd_dea", "type": "float", "description": "MACD DEA线" },
+      { "field": "macd_hist", "type": "float", "description": "MACD 柱状图" }
+    ],
+    "news_fields": [
+      { "field": "title", "type": "string", "description": "新闻标题" },
+      { "field": "source", "type": "string", "description": "来源" },
+      { "field": "date", "type": "string", "description": "发布日期" },
+      { "field": "summary", "type": "string", "description": "摘要" },
+      { "field": "url", "type": "string", "description": "原文链接" }
+    ]
+  },
+
+  "quality_checks": {
+    "description": "数据质量检查规则",
+    "checks": [
+      {
+        "check_id": "qc_001",
+        "name": "ticker_suffix_validation",
+        "rule": "A股必须以 .SH / .SZ / .BJ 结尾",
+        "severity": "blocking"
+      },
+      {
+        "check_id": "qc_002",
+        "name": "price_range_validation",
+        "rule": "price > 0 且 price < 10000",
+        "severity": "blocking"
+      },
+      {
+        "check_id": "qc_003",
+        "name": "kline_continuity",
+        "rule": "交易日连续，缺失不超过3天（节假日除外）",
+        "severity": "warning"
+      },
+      {
+        "check_id": "qc_004",
+        "name": "indicator_completeness",
+        "rule": "所有请求的指标字段均非空",
+        "severity": "warning"
+      },
+      {
+        "check_id": "qc_005",
+        "name": "data_freshness",
+        "rule": "实时数据时间戳在30分钟内",
+        "severity": "warning"
+      }
+    ]
+  },
+
+  "execution_config": {
+    "description": "执行配置",
+    "parallel_execution": {
+      "enabled": true,
+      "max_concurrent_requests": 3,
+      "parallelizable_steps": [2, 6, 7]
+    },
+    "retry_policy": {
+      "max_retries": 3,
+      "retry_interval_seconds": 5,
+      "exponential_backoff": true
+    },
+    "output_directory": "data/",
+    "naming_convention": "{data_type}_{YYYYMMDD}_{HHMMSS}.csv/json",
+    "logging": {
+      "level": "INFO",
+      "format": "{timestamp} | {level} | {step} | {message}"
+    }
+  }
+}
