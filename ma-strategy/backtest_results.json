@@ -14,8 +14,8 @@
       "final_equity": 147251.12,
       "total_return": 0.4725,
       "total_return_pct": 47.25,
-      "annual_return": 0.1377,
-      "annual_return_pct": 13.77,
+      "annual_return": 0.1378,
+      "annual_return_pct": 13.78,
       "max_drawdown": -0.4241,
       "max_drawdown_pct": -42.41,
       "sharpe_ratio": 0.56,
@@ -26,13 +26,13 @@
       "avg_win": 19218.53,
       "avg_loss": -9524.75,
       "benchmark": {
-        "total_return": 0.7287,
-        "total_return_pct": 72.87,
-        "annual_return": 0.2002,
-        "annual_return_pct": 20.02,
+        "total_return": 0.7235,
+        "total_return_pct": 72.35,
+        "annual_return": 0.1992,
+        "annual_return_pct": 19.92,
         "max_drawdown": -0.381,
         "max_drawdown_pct": -38.1,
-        "sharpe_ratio": 0.644
+        "sharpe_ratio": 0.642
       }
     },
     {
@@ -44,11 +44,11 @@
       "final_equity": 415983.4,
       "total_return": 3.1598,
       "total_return_pct": 315.98,
-      "annual_return": 0.6083,
-      "annual_return_pct": 60.83,
+      "annual_return": 0.609,
+      "annual_return_pct": 60.9,
       "max_drawdown": -0.5738,
       "max_drawdown_pct": -57.38,
-      "sharpe_ratio": 1.106,
+      "sharpe_ratio": 1.107,
       "total_trades": 26,
       "win_rate": 0.3846,
       "win_rate_pct": 38.46,
@@ -56,13 +56,13 @@
       "avg_win": 52015.53,
       "avg_loss": -12606.87,
       "benchmark": {
-        "total_return": 3.0475,
-        "total_return_pct": 304.75,
-        "annual_return": 0.5937,
-        "annual_return_pct": 59.37,
+        "total_return": 2.9628,
+        "total_return_pct": 296.28,
+        "annual_return": 0.5831,
+        "annual_return_pct": 58.31,
         "max_drawdown": -0.5401,
         "max_drawdown_pct": -54.01,
-        "sharpe_ratio": 1.006
+        "sharpe_ratio": 0.997
       }
     },
     {
@@ -74,8 +74,8 @@
       "final_equity": 65993.22,
       "total_return": -0.3401,
       "total_return_pct": -34.01,
-      "annual_return": -0.1264,
-      "annual_return_pct": -12.64,
+      "annual_return": -0.1263,
+      "annual_return_pct": -12.63,
       "max_drawdown": -0.7168,
       "max_drawdown_pct": -71.68,
       "sharpe_ratio": 0.102,
@@ -86,13 +86,13 @@
       "avg_win": 22805.31,
       "avg_loss": -7366.16,
       "benchmark": {
-        "total_return": -0.5718,
-        "total_return_pct": -57.18,
-        "annual_return": -0.2409,
-        "annual_return_pct": -24.09,
+        "total_return": -0.5509,
+        "total_return_pct": -55.09,
+        "annual_return": -0.2289,
+        "annual_return_pct": -22.89,
         "max_drawdown": -0.8303,
         "max_drawdown_pct": -83.03,
-        "sharpe_ratio": 0.027
+        "sharpe_ratio": 0.052
       }
     },
     {
@@ -104,11 +104,11 @@
       "final_equity": 253616.76,
       "total_return": 1.5362,
       "total_return_pct": 153.62,
-      "annual_return": 0.3637,
-      "annual_return_pct": 36.37,
+      "annual_return": 0.3641,
+      "annual_return_pct": 36.41,
       "max_drawdown": -0.4009,
       "max_drawdown_pct": -40.09,
-      "sharpe_ratio": 0.957,
+      "sharpe_ratio": 0.958,
       "total_trades": 28,
       "win_rate": 0.3929,
       "win_rate_pct": 39.29,
@@ -116,13 +116,13 @@
       "avg_win": 29744.19,
       "avg_loss": -10068.01,
       "benchmark": {
-        "total_return": 1.5011,
-        "total_return_pct": 150.11,
-        "annual_return": 0.3574,
-        "annual_return_pct": 35.74,
+        "total_return": 1.5403,
+        "total_return_pct": 154.03,
+        "annual_return": 0.3649,
+        "annual_return_pct": 36.49,
         "max_drawdown": -0.4924,
         "max_drawdown_pct": -49.24,
-        "sharpe_ratio": 0.834
+        "sharpe_ratio": 0.844
       }
     },
     {
