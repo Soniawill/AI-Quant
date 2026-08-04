@@ -14,8 +14,8 @@
       "final_equity": 137593.63,
       "total_return": 0.3759,
       "total_return_pct": 37.59,
-      "annual_return": 0.1122,
-      "annual_return_pct": 11.22,
+      "annual_return": 0.1125,
+      "annual_return_pct": 11.25,
       "max_drawdown": -0.4619,
       "max_drawdown_pct": -46.19,
       "sharpe_ratio": 0.491,
@@ -26,13 +26,13 @@
       "avg_win": 19218.53,
       "avg_loss": -10168.77,
       "benchmark": {
-        "total_return": 0.5919,
-        "total_return_pct": 59.19,
-        "annual_return": 0.1676,
-        "annual_return_pct": 16.76,
+        "total_return": 0.6255,
+        "total_return_pct": 62.55,
+        "annual_return": 0.1761,
+        "annual_return_pct": 17.61,
         "max_drawdown": -0.381,
         "max_drawdown_pct": -38.1,
-        "sharpe_ratio": 0.581
+        "sharpe_ratio": 0.597
       }
     },
     {
@@ -44,8 +44,8 @@
       "final_equity": 415983.4,
       "total_return": 3.1598,
       "total_return_pct": 315.98,
-      "annual_return": 0.6083,
-      "annual_return_pct": 60.83,
+      "annual_return": 0.6097,
+      "annual_return_pct": 60.97,
       "max_drawdown": -0.5738,
       "max_drawdown_pct": -57.38,
       "sharpe_ratio": 1.108,
@@ -56,13 +56,13 @@
       "avg_win": 52015.53,
       "avg_loss": -12606.87,
       "benchmark": {
-        "total_return": 2.7345,
-        "total_return_pct": 273.45,
-        "annual_return": 0.5515,
-        "annual_return_pct": 55.15,
+        "total_return": 2.95,
+        "total_return_pct": 295.0,
+        "annual_return": 0.5821,
+        "annual_return_pct": 58.21,
         "max_drawdown": -0.5624,
         "max_drawdown_pct": -56.24,
-        "sharpe_ratio": 0.971
+        "sharpe_ratio": 0.996
       }
     },
     {
@@ -74,8 +74,8 @@
       "final_equity": 65993.22,
       "total_return": -0.3401,
       "total_return_pct": -34.01,
-      "annual_return": -0.1263,
-      "annual_return_pct": -12.63,
+      "annual_return": -0.1259,
+      "annual_return_pct": -12.59,
       "max_drawdown": -0.7168,
       "max_drawdown_pct": -71.68,
       "sharpe_ratio": 0.102,
@@ -88,8 +88,8 @@
       "benchmark": {
         "total_return": -0.5509,
         "total_return_pct": -55.09,
-        "annual_return": -0.2289,
-        "annual_return_pct": -22.89,
+        "annual_return": -0.2284,
+        "annual_return_pct": -22.84,
         "max_drawdown": -0.8303,
         "max_drawdown_pct": -83.03,
         "sharpe_ratio": 0.052
@@ -104,8 +104,8 @@
       "final_equity": 253616.76,
       "total_return": 1.5362,
       "total_return_pct": 153.62,
-      "annual_return": 0.3637,
-      "annual_return_pct": 36.37,
+      "annual_return": 0.3645,
+      "annual_return_pct": 36.45,
       "max_drawdown": -0.4009,
       "max_drawdown_pct": -40.09,
       "sharpe_ratio": 0.958,
@@ -116,13 +116,13 @@
       "avg_win": 29744.19,
       "avg_loss": -10068.01,
       "benchmark": {
-        "total_return": 1.3517,
-        "total_return_pct": 135.17,
-        "annual_return": 0.3298,
-        "annual_return_pct": 32.98,
+        "total_return": 1.3991,
+        "total_return_pct": 139.91,
+        "annual_return": 0.3394,
+        "annual_return_pct": 33.94,
         "max_drawdown": -0.4924,
         "max_drawdown_pct": -49.24,
-        "sharpe_ratio": 0.799
+        "sharpe_ratio": 0.81
       }
     },
     {
@@ -134,8 +134,8 @@
       "final_equity": 158182.47,
       "total_return": 0.5818,
       "total_return_pct": 58.18,
-      "annual_return": 0.1601,
-      "annual_return_pct": 16.01,
+      "annual_return": 0.16,
+      "annual_return_pct": 16.0,
       "max_drawdown": -0.1713,
       "max_drawdown_pct": -17.13,
       "sharpe_ratio": 1.037,
@@ -146,13 +146,13 @@
       "avg_win": 7870.4,
       "avg_loss": -1652.67,
       "benchmark": {
-        "total_return": 0.9645,
-        "total_return_pct": 96.45,
-        "annual_return": 0.2444,
-        "annual_return_pct": 24.44,
+        "total_return": 0.9671,
+        "total_return_pct": 96.71,
+        "annual_return": 0.2447,
+        "annual_return_pct": 24.47,
         "max_drawdown": -0.3011,
         "max_drawdown_pct": -30.11,
-        "sharpe_ratio": 1.205
+        "sharpe_ratio": 1.207
       }
     }
   ]
