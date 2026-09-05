@@ -14,8 +14,8 @@
       "final_equity": 131687.98,
       "total_return": 0.3169,
       "total_return_pct": 31.69,
-      "annual_return": 0.0961,
-      "annual_return_pct": 9.61,
+      "annual_return": 0.0962,
+      "annual_return_pct": 9.62,
       "max_drawdown": -0.534,
       "max_drawdown_pct": -53.4,
       "sharpe_ratio": 0.447,
@@ -26,13 +26,13 @@
       "avg_win": 21236.06,
       "avg_loss": -11143.14,
       "benchmark": {
-        "total_return": 0.7337,
-        "total_return_pct": 73.37,
-        "annual_return": 0.2013,
-        "annual_return_pct": 20.13,
+        "total_return": 0.7382,
+        "total_return_pct": 73.82,
+        "annual_return": 0.2025,
+        "annual_return_pct": 20.25,
         "max_drawdown": -0.381,
         "max_drawdown_pct": -38.1,
-        "sharpe_ratio": 0.645
+        "sharpe_ratio": 0.647
       }
     },
     {
@@ -44,8 +44,8 @@
       "final_equity": 415451.03,
       "total_return": 3.1545,
       "total_return_pct": 315.45,
-      "annual_return": 0.6076,
-      "annual_return_pct": 60.76,
+      "annual_return": 0.6083,
+      "annual_return_pct": 60.83,
       "max_drawdown": -0.5738,
       "max_drawdown_pct": -57.38,
       "sharpe_ratio": 1.107,
@@ -56,13 +56,13 @@
       "avg_win": 57963.3,
       "avg_loss": -15351.08,
       "benchmark": {
-        "total_return": 3.6686,
-        "total_return_pct": 366.86,
-        "annual_return": 0.6713,
-        "annual_return_pct": 67.13,
+        "total_return": 3.5251,
+        "total_return_pct": 352.51,
+        "annual_return": 0.6548,
+        "annual_return_pct": 65.48,
         "max_drawdown": -0.5624,
         "max_drawdown_pct": -56.24,
-        "sharpe_ratio": 1.068
+        "sharpe_ratio": 1.055
       }
     },
     {
@@ -74,8 +74,8 @@
       "final_equity": 64625.12,
       "total_return": -0.3537,
       "total_return_pct": -35.37,
-      "annual_return": -0.1286,
-      "annual_return_pct": -12.86,
+      "annual_return": -0.1285,
+      "annual_return_pct": -12.85,
       "max_drawdown": -0.7168,
       "max_drawdown_pct": -71.68,
       "sharpe_ratio": 0.091,
@@ -86,13 +86,13 @@
       "avg_win": 22805.31,
       "avg_loss": -7114.61,
       "benchmark": {
-        "total_return": -0.5015,
-        "total_return_pct": -50.15,
-        "annual_return": -0.197,
-        "annual_return_pct": -19.7,
+        "total_return": -0.5069,
+        "total_return_pct": -50.69,
+        "annual_return": -0.1996,
+        "annual_return_pct": -19.96,
         "max_drawdown": -0.8303,
         "max_drawdown_pct": -83.03,
-        "sharpe_ratio": 0.11
+        "sharpe_ratio": 0.105
       }
     },
     {
@@ -104,8 +104,8 @@
       "final_equity": 251592.89,
       "total_return": 1.5159,
       "total_return_pct": 151.59,
-      "annual_return": 0.3601,
-      "annual_return_pct": 36.01,
+      "annual_return": 0.3605,
+      "annual_return_pct": 36.05,
       "max_drawdown": -0.4009,
       "max_drawdown_pct": -40.09,
       "sharpe_ratio": 0.947,
@@ -116,13 +116,13 @@
       "avg_win": 31872.66,
       "avg_loss": -11546.6,
       "benchmark": {
-        "total_return": 2.1359,
-        "total_return_pct": 213.59,
-        "annual_return": 0.4637,
-        "annual_return_pct": 46.37,
+        "total_return": 2.1499,
+        "total_return_pct": 214.99,
+        "annual_return": 0.4664,
+        "annual_return_pct": 46.64,
         "max_drawdown": -0.4676,
         "max_drawdown_pct": -46.76,
-        "sharpe_ratio": 0.972
+        "sharpe_ratio": 0.975
       }
     },
     {
