@@ -26,13 +26,13 @@
       "avg_win": 23404.5,
       "avg_loss": -10878.94,
       "benchmark": {
-        "total_return": 0.5236,
-        "total_return_pct": 52.36,
-        "annual_return": 0.1507,
-        "annual_return_pct": 15.07,
+        "total_return": 0.5353,
+        "total_return_pct": 53.53,
+        "annual_return": 0.1538,
+        "annual_return_pct": 15.38,
         "max_drawdown": -0.4429,
         "max_drawdown_pct": -44.29,
-        "sharpe_ratio": 0.545
+        "sharpe_ratio": 0.551
       }
     },
     {
@@ -44,11 +44,11 @@
       "final_equity": 340999.44,
       "total_return": 2.41,
       "total_return_pct": 241.0,
-      "annual_return": 0.5052,
-      "annual_return_pct": 50.52,
+      "annual_return": 0.5057,
+      "annual_return_pct": 50.57,
       "max_drawdown": -0.5738,
       "max_drawdown_pct": -57.38,
-      "sharpe_ratio": 1.0,
+      "sharpe_ratio": 1.001,
       "total_trades": 26,
       "win_rate": 0.3462,
       "win_rate_pct": 34.62,
@@ -56,13 +56,13 @@
       "avg_win": 62594.52,
       "avg_loss": -18767.91,
       "benchmark": {
-        "total_return": 1.6439,
-        "total_return_pct": 164.39,
-        "annual_return": 0.3828,
-        "annual_return_pct": 38.28,
+        "total_return": 1.6603,
+        "total_return_pct": 166.03,
+        "annual_return": 0.386,
+        "annual_return_pct": 38.6,
         "max_drawdown": -0.7153,
         "max_drawdown_pct": -71.53,
-        "sharpe_ratio": 0.817
+        "sharpe_ratio": 0.82
       }
     },
     {
@@ -104,11 +104,11 @@
       "final_equity": 264671.31,
       "total_return": 1.6467,
       "total_return_pct": 164.67,
-      "annual_return": 0.3833,
-      "annual_return_pct": 38.33,
+      "annual_return": 0.3837,
+      "annual_return_pct": 38.37,
       "max_drawdown": -0.4009,
       "max_drawdown_pct": -40.09,
-      "sharpe_ratio": 0.989,
+      "sharpe_ratio": 0.99,
       "total_trades": 26,
       "win_rate": 0.3462,
       "win_rate_pct": 34.62,
@@ -116,13 +116,13 @@
       "avg_win": 42023.45,
       "avg_loss": -12392.67,
       "benchmark": {
-        "total_return": 1.6452,
-        "total_return_pct": 164.52,
-        "annual_return": 0.383,
-        "annual_return_pct": 38.3,
+        "total_return": 1.6608,
+        "total_return_pct": 166.08,
+        "annual_return": 0.3861,
+        "annual_return_pct": 38.61,
         "max_drawdown": -0.4977,
         "max_drawdown_pct": -49.77,
-        "sharpe_ratio": 0.867
+        "sharpe_ratio": 0.871
       }
     },
     {
